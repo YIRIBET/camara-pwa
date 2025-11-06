@@ -1,0 +1,17 @@
+{
+  "name": "Mi camara en pwa",
+  "short_name": " Camara PWA", 
+  "start_url": "/camara-pwa",
+  "scope": "/camara-pwa",
+  "display": "standalone", 
+  "background_color": "#8321f3",
+  "theme_color": "#c593f5",
+  "description": "Una aplicación para gestionar tus tareas diarias, funciona offline.",
+  "icons": [
+    {
+      "src": "./image/icons/camara.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
