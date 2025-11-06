@@ -97,9 +97,26 @@ async function openCamera() {
 
 /** Cambiar entre cámara frontal y trasera */
 async function switchCamera() {
-    currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
-    await openCamera();
+    try {
+        // 🔹 Cierra la cámara actual antes de cambiar
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
+
+        // 🔹 Cambia entre cámara frontal y trasera
+        currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+
+        // 🔹 Vuelve a abrir la cámara con el nuevo modo
+        await openCamera();
+
+        console.log(`Cambiando a cámara: ${currentFacingMode}`);
+    } catch (error) {
+        console.error('Error al cambiar de cámara:', error);
+        alert('No se pudo cambiar de cámara. Verifica los permisos o tu dispositivo.');
+    }
 }
+
 
 /** Tomar fotografía */
 function takePhoto() {
