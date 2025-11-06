@@ -111,21 +111,28 @@ function takePhoto() {
         return;
     }
 
+    // Configurar tamaño del canvas igual al video
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // 💡 Convierte la imagen a Base64 (formato JPEG)
+    // Convertir la imagen a Base64 (JPEG)
     const imageDataURL = canvas.toDataURL('image/jpeg', 0.6);
 
-    // 📸 Muestra en consola la imagen Base64 completa
-    console.log('📸 Imagen capturada en Base64:');
-    console.log(imageDataURL);
+    // Verificar que el valor no esté vacío
+    if (!imageDataURL || !imageDataURL.startsWith('data:image')) {
+        console.error('Error: no se generó la imagen Base64 correctamente.');
+        return;
+    }
 
-    // 📷 También muestra un fragmento (por si es muy largo)
-    console.log('📷 Primeros 100 caracteres:', imageDataURL.substring(0, 100) + '...');
+    // ✅ Mostrar en consola la cadena Base64
+    console.log('Imagen capturada en Base64:');
+    console.dir(imageDataURL);
 
-    // 👉 Agrega la foto solo a la galería temporal (no se guarda en cache)
+    // 🔍 Mostrar longitud para confirmar
+    console.log('Longitud del string Base64:', imageDataURL.length);
+
+    // 💾 Agregar a galería temporal (sin guardar en cache)
     const newPhoto = {
         id: Date.now(),
         data: imageDataURL,
@@ -135,7 +142,7 @@ function takePhoto() {
     photos.unshift(newPhoto);
     updateGallery();
 
-    console.log('Foto capturada:', photos.length, 'en total');
+    console.log('Foto agregada a la galería:', photos.length, 'total');
 
     setTimeout(() => {
         galleryScroll.scrollTo({ left: 0, behavior: 'smooth' });
