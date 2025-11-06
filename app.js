@@ -129,10 +129,10 @@ function takePhoto() {
     console.log('Imagen capturada en Base64:');
     console.dir(imageDataURL);
 
-    // 🔍 Mostrar longitud para confirmar
+    
     console.log('Longitud del string Base64:', imageDataURL.length);
 
-    // 💾 Agregar a galería temporal (sin guardar en cache)
+  
     const newPhoto = {
         id: Date.now(),
         data: imageDataURL,

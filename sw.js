@@ -14,24 +14,30 @@ const urlsToCache = [ // Lista de archivos a guardar en caché
  * Evento Install: Se ejecuta cuando el Service Worker se instala por primera vez
  * Aquí precargamos los recursos en el caché
  */
-self.addEventListener('install', function(event) {
-    console.log('[Service Worker] Instalando...');
-    
-    // Usar event.waitUntil para asegurar que la instalación no termine 
-    // hasta que el caché esté listo
-    event.waitUntil(
-        // Abrir el caché con el nombre definido
-        caches.open(CACHE_NAME)
-            .then(function(cache) {
-                console.log('[Service Worker] Cache abierto');
-                // Agregar todos los archivos de urlsToCache al almacenamiento
-                return cache.addAll(urlsToCache);
-            })
-            .catch(function(error) {
-                console.error('[Service Worker] Error al abrir cache:', error);
-            })
+self.addEventListener('fetch', function(event) {
+    event.respondWith(
+        caches.match(event.request).then(function(response) {
+            if (response) {
+                console.log('[SW] Sirviendo desde caché:', event.request.url);
+                return response;
+            }
+            console.log('[SW] Buscando en red:', event.request.url);
+            return fetch(event.request)
+                .then(function(networkResponse) {
+                    // Opcional: guardar nuevas respuestas en caché dinámico
+                    return caches.open(CACHE_NAME).then(function(cache) {
+                        cache.put(event.request, networkResponse.clone());
+                        return networkResponse;
+                    });
+                })
+                .catch(() => {
+                    // Si no hay red ni caché, mostrar el index.html (modo offline)
+                    return caches.match('./index.html');
+                });
+        })
     );
 });
+
 
 /**
  * Evento Fetch: Intercepta todas las peticiones de red
