@@ -17,21 +17,8 @@ let stream = null;
 let currentFacingMode = 'environment';
 let photos = [];
 
-/** Cargar fotos guardadas del localStorage */
-function loadPhotos() {
-    const savedPhotos = localStorage.getItem('pwa-camera-photos');
-    if (savedPhotos) {
-        photos = JSON.parse(savedPhotos);
-        updateGallery();
-    }
-}
 
-/** Guardar fotos en localStorage */
-function savePhotos() {
-    localStorage.setItem('pwa-camera-photos', JSON.stringify(photos));
-}
 
-/** Actualizar la galería de fotos */
 function updateGallery() {
     galleryScroll.innerHTML = '';
     photoCount.textContent = photos.length;
@@ -118,7 +105,6 @@ async function switchCamera() {
 }
 
 
-/** Tomar fotografía */
 function takePhoto() {
     if (!stream) {
         alert('Primero debes abrir la cámara');
@@ -129,9 +115,17 @@ function takePhoto() {
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // 💡 Usa JPEG con compresión para más fotos
+    // 💡 Convierte la imagen a Base64 (formato JPEG)
     const imageDataURL = canvas.toDataURL('image/jpeg', 0.6);
 
+    // 📸 Muestra en consola la imagen Base64 completa
+    console.log('📸 Imagen capturada en Base64:');
+    console.log(imageDataURL);
+
+    // 📷 También muestra un fragmento (por si es muy largo)
+    console.log('📷 Primeros 100 caracteres:', imageDataURL.substring(0, 100) + '...');
+
+    // 👉 Agrega la foto solo a la galería temporal (no se guarda en cache)
     const newPhoto = {
         id: Date.now(),
         data: imageDataURL,
@@ -139,7 +133,6 @@ function takePhoto() {
     };
 
     photos.unshift(newPhoto);
-    savePhotos();
     updateGallery();
 
     console.log('Foto capturada:', photos.length, 'en total');
@@ -174,4 +167,4 @@ modal.addEventListener('click', (e) => {
 });
 
 window.addEventListener('beforeunload', closeCamera);
-loadPhotos();
+
